@@ -4,34 +4,36 @@ import java.io.Serializable;
 
 public abstract class Movie implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    protected String movieId;
+    protected String title;
+    protected String genre;
+    protected int durationMinutes;
+    protected int ageLimit;
+    protected String description;
 
-    private String movieId;
-    private String title;
-    private String genre;
-    private int durationMinutes;
-    private int ageRating;
-    private String description;
-
-    public Movie(String movieId, String title, String genre, int durationMinutes, int ageRating, String description) {
+    public Movie(String movieId, String title, String genre, int durationMinutes, int ageLimit, String description) {
         this.movieId = movieId;
         this.title = title;
         this.genre = genre;
         this.durationMinutes = durationMinutes;
-        this.ageRating = ageRating;
+        this.ageLimit = ageLimit;
         this.description = description;
     }
 
-    public abstract String getMovieType();
-
-    // --- Getters ---
+    // --- Getters Hoàn Chỉnh (Cần thiết để các lớp khác truy cập) ---
     public String getMovieId() { return movieId; }
-    public String getTitle() { return title; }
-    public int getDurationMinutes() { return durationMinutes; }
-    public int getAgeRating() { return ageRating; }
+    public String getTitle() { return title; } // FIX LỖI "Cannot resolve method 'getTitle'"
+    public String getGenre() { return genre; }
+    public int getDurationMinutes() { return durationMinutes; } // FIX LỖI "Cannot resolve method 'getDurationMinutes'"
+    public int getAgeLimit() { return ageLimit; }
+    public String getDescription() { return description; }
+
+    // --- Phương thức Trừu tượng (Đa hình) ---
+    public abstract double calculateTicketModifier();
 
     @Override
     public String toString() {
-        return String.format("[%s] %s (%d phút) - Giới hạn: %d+", movieId, title, durationMinutes, ageRating);
+        return String.format("ID: %s | Ten: %s | Thoi luong: %d phut | Gioi han tuoi: %d",
+                movieId, title, durationMinutes, ageLimit);
     }
 }

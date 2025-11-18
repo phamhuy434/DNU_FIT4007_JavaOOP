@@ -1,7 +1,7 @@
 package com.cinema.model.seat;
 
 public enum SeatStatus {
-    AVAILABLE, // Trống, sẵn sàng để đặt
-    BOOKED,    // Đã được đặt
-    RESERVED   // (Tùy chọn) Có thể dùng cho mục đích bảo trì, hoặc đã chọn nhưng chưa thanh toán
+    AVAILABLE, // Ghế trống
+    BOOKED,    // Ghế đã được đặt
+    MAINTENANCE // Tùy chọn: Ghế đang bảo trì
 }
