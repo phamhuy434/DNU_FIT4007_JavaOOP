@@ -1,46 +1,38 @@
 package com.cinema.model;
 
-import com.cinema.model.seat.Seat;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Ticket implements Serializable {
+    private String ticketId;
+    private String showtimeId;
+    private String movieId;
+    private String roomId;
+    private String seatId;
+    private double price;
+    private LocalDateTime bookedAt;
+    private String status; // PAID, PENDING
 
-    private final String ticketId;
-    private final Showtime showtime; // Vé thuộc suất chiếu nào
-    private final Seat seat;         // Ghế nào đã được đặt
-    private final double price;      // Giá vé cuối cùng
-    private final LocalDateTime bookingTime; // Thời điểm đặt vé
-
-    /**
-     * Constructor tạo vé mới
-     * @param showtime Suất chiếu
-     * @param seat Ghế được chọn
-     * @param price Giá vé tính theo loại ghế
-     */
-    public Ticket(Showtime showtime, Seat seat, double price) {
-        this.ticketId = UUID.randomUUID().toString().substring(0, 8);
-        this.showtime = showtime;
-        this.seat = seat;
+    public Ticket(String showtimeId, String movieId, String roomId, String seatId, double price) {
+        this.ticketId = UUID.randomUUID().toString();
+        this.showtimeId = showtimeId;
+        this.movieId = movieId;
+        this.roomId = roomId;
+        this.seatId = seatId;
         this.price = price;
-        this.bookingTime = LocalDateTime.now(); // Ghi nhận thời điểm tạo vé
+        this.bookedAt = LocalDateTime.now();
+        this.status = "PAID";
     }
 
-    // --- Getters ---
+    // getters
     public String getTicketId() { return ticketId; }
-    public Showtime getShowtime() { return showtime; }
-    public Seat getSeat() { return seat; }
+    public String getSeatId() { return seatId; }
     public double getPrice() { return price; }
-    public LocalDateTime getBookingTime() { return bookingTime; }
 
-    // --- Hiển thị thông tin ---
-    @Override
-    public String toString() {
-        return String.format("VE %s | %s | Ghe: %s%d (%s) | Gia: %.0f VND",
-                ticketId,
-                showtime.getMovie().getTitle(),
-                seat.getRow(), seat.getNumber(), seat.getClass().getSimpleName().replace("Seat", ""),
-                price);
-    }
+    public String getMovieId() { return movieId; }
+    public String getShowtimeId() { return showtimeId; }
+    public String getRoomId() { return roomId; }
+    public LocalDateTime getBookedAt() { return bookedAt; }
+    public String getStatus() { return status; }
 }

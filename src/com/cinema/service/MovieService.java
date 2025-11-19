@@ -1,17 +1,14 @@
 package com.cinema.service;
 
 import com.cinema.model.movie.Movie;
-import java.util.*;
+import com.cinema.repository.MovieRepository;
+
+import java.util.Collection;
 
 public class MovieService {
+    private MovieRepository repo = new MovieRepository();
 
-    private List<Movie> movies = new ArrayList<>();
-
-    public void addMovie(Movie m) {
-        movies.add(m);
-    }
-
-    public List<Movie> getAll() {
-        return movies;
-    }
+    public void addMovie(Movie m) { repo.add(m); }
+    public Movie findById(String id) { return repo.findById(id); }
+    public Collection<Movie> getAll() { return repo.findAll(); }
 }

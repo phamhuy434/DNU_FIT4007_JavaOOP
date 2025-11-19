@@ -1,23 +1,11 @@
 package com.cinema.model.seat;
 
-import com.cinema.model.PriceConstants;
-
 public class CoupleSeat extends Seat {
+    private double priceForTwo;
 
-    // Constructor đã cập nhật
-    public CoupleSeat(String seatId, String row, int number) {
-        super(seatId, row, number);
+    public CoupleSeat(String seatId, double priceForTwo) {
+        super(seatId);
+        this.priceForTwo = priceForTwo;
     }
-
-    @Override
-    public double getPrice() {
-        // Giá Ghế Đôi = (Giá cơ bản * 2) + Phụ phí đôi
-        return (PriceConstants.BASE_PRICE * 2) + PriceConstants.COUPLE_SURCHARGE;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Ghế Đôi [%s%d - Giá: %.0f VND, Trạng thái: %s]",
-                getRow(), getNumber(), getPrice(), getStatus());
-    }
+    @Override public double getPrice() { return priceForTwo; }
 }

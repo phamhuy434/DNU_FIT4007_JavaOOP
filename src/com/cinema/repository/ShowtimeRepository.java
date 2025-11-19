@@ -1,62 +1,69 @@
 package com.cinema.repository;
 
 import com.cinema.model.Showtime;
-import com.cinema.util.PersistenceUtil;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import com.cinema.ui.CsvUtil;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.*;
 
 public class ShowtimeRepository {
 
-    private List<Showtime> showtimes;
-    private static final String FILE_PATH = "data/showtimes.dat";
+    private String csv = "data/showtimes.csv";
+    private Map<String, Showtime> map = new LinkedHashMap<>();
 
     public ShowtimeRepository() {
-        // Tải dữ liệu từ file khi khởi tạo
-        this.showtimes = PersistenceUtil.load(FILE_PATH);
-        if (this.showtimes.isEmpty()) {
-            System.out.println("Khoi tao ShowtimeRepository voi danh sach trong.");
+        load();
+    }
+
+    public void load() {
+        try {
+            List<String[]> rows = CsvUtil.readAll(csv);
+            for (String[] r : rows) {
+                if (r.length < 5) continue;
+                String id = r[0], movieId = r[1], roomId = r[2];
+                LocalDate date = LocalDate.parse(r[3]);
+                LocalTime time = LocalTime.parse(r[4]);
+                Showtime s = new Showtime(id, movieId, roomId, date, time);
+                map.put(id, s);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    // Ghi tất cả dữ liệu vào file
-    private void saveAll() {
-        PersistenceUtil.save(showtimes, FILE_PATH);
-    }
-
-    // Thêm mới hoặc cập nhật
-    public void save(Showtime showtime) {
-        // Giả định Showtime đã có ID được sinh ra trong constructor
-        if (findById(showtime.getShowtimeId()).isPresent()) {
-            // Logic cập nhật: tìm và thay thế (tùy chọn)
-        } else {
-            showtimes.add(showtime);
+    public void save() {
+        List<String[]> rows = new ArrayList<>();
+        for (Showtime s : map.values()) {
+            rows.add(new String[]{
+                    s.getShowtimeId(),
+                    s.getMovieId(),
+                    s.getRoomId(),
+                    s.getDate().toString(),
+                    s.getTime().toString()
+            });
         }
-        saveAll();
+        try {
+            CsvUtil.writeAll(csv, rows);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public Optional<Showtime> findById(String id) {
-        return showtimes.stream()
-                .filter(s -> s.getShowtimeId().equals(id))
-                .findFirst();
+    public void add(Showtime s) {
+        map.put(s.getShowtimeId(), s);
+        save();
     }
 
+    public Showtime findById(String id) {
+        return map.get(id);
+    }
+
+    // --------------------------
+    // ⭐ Trả về List để Service dùng được
+    // --------------------------
     public List<Showtime> findAll() {
-        return new ArrayList<>(showtimes);
-    }
-
-    // Tùy chọn: Phương thức tìm suất chiếu theo phòng (cần cho logic trùng lịch)
-    public List<Showtime> findByRoomId(String roomId) {
-        return showtimes.stream()
-                .filter(s -> s.getRoom().getRoomId().equals(roomId))
-                .toList();
-    }
-
-    public boolean delete(String id) {
-        boolean removed = showtimes.removeIf(s -> s.getShowtimeId().equals(id));
-        if (removed) {
-            saveAll();
-        }
-        return removed;
+        return new ArrayList<>(map.values());
     }
 }

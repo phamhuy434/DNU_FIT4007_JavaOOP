@@ -1,52 +1,66 @@
 package com.cinema.model;
 
-import com.cinema.model.movie.Movie; // Import lớp Movie
+import com.cinema.exception.SeatAlreadyBookedException;
+
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Showtime implements Serializable {
 
-    private final String showtimeId;
-    private final Movie movie;
-    private final Room room;
-    private final LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private String showtimeId;
+    private String movieId;
+    private String roomId;
+    private LocalDate date;
+    private LocalTime time;
 
-    public Showtime(Movie movie, Room room, LocalDateTime startTime) {
-        this.showtimeId = UUID.randomUUID().toString().substring(0, 8);
-        this.movie = movie;
-        this.room = room;
-        this.startTime = startTime;
+    private List<String> bookedSeatIds = new ArrayList<>();
 
-        // Dòng này đã được sửa bằng cách gọi public getter
-        int totalTime = movie.getDurationMinutes() + 15;
-        this.endTime = startTime.plus(totalTime, ChronoUnit.MINUTES);
+    public Showtime(String showtimeId, String movieId, String roomId,
+                    LocalDate date, LocalTime time) {
+        this.showtimeId = showtimeId;
+        this.movieId = movieId;
+        this.roomId = roomId;
+        this.date = date;
+        this.time = time;
     }
 
-    // --- Getters ---
     public String getShowtimeId() { return showtimeId; }
-    public Movie getMovie() { return movie; }
-    public Room getRoom() { return room; }
-    public LocalDateTime getStartTime() { return startTime; }
-    public LocalDateTime getEndTime() { return endTime; }
+    public String getMovieId() { return movieId; }
+    public String getRoomId() { return roomId; }
+    public LocalDate getDate() { return date; }
+    public LocalTime getTime() { return time; }
+    public List<String> getBookedSeatIds() { return bookedSeatIds; }
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public boolean isConflict(Showtime other) {
-        if (!this.room.getRoomId().equals(other.room.getRoomId())) {
-            return false;
+    // -------------------------------
+    // ⭐ Thêm lại hàm BOOK SEAT
+    // -------------------------------
+    public void bookSeat(String seatId) throws SeatAlreadyBookedException {
+        if (bookedSeatIds.contains(seatId)) {
+            throw new SeatAlreadyBookedException("Seat " + seatId + " already booked");
         }
-        return this.startTime.isBefore(other.endTime) && this.endTime.isAfter(other.startTime);
+        bookedSeatIds.add(seatId);
     }
 
-    @Override
-    public String toString() {
-        return String.format("Suat %s | Phim: %s | Phong: %s | Bat dau: %s - Ket thuc: %s",
-                showtimeId, movie.getTitle(), room.getRoomId(),
-                startTime.toLocalTime(), endTime.toLocalTime());
+    // -------------------------------
+    // ⭐ Kiểm tra ghế đã đặt
+    // -------------------------------
+    public boolean isSeatBooked(String seatId) {
+        return bookedSeatIds.contains(seatId);
+    }
+
+    // -------------------------------
+    // ⭐ Check trùng suất chiếu
+    // -------------------------------
+    public boolean isConflict(Showtime other) {
+        if (!this.roomId.equals(other.roomId)) return false;
+        if (!this.date.equals(other.date)) return false;
+
+        LocalTime thisEnd = this.time.plusHours(2);
+        LocalTime otherEnd = other.time.plusHours(2);
+
+        return this.time.isBefore(otherEnd) && other.time.isBefore(thisEnd);
     }
 }
