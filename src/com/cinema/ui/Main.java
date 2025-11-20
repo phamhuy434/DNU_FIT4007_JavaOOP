@@ -10,27 +10,29 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Scanner;
 import java.util.UUID;
+import java.time.format.DateTimeParseException;
 
 public class Main {
-    private static MovieRepository movieRepo = new MovieRepository();
-    private static RoomRepository roomRepo = new RoomRepository();
-    private static ShowtimeRepository showRepo = new ShowtimeRepository();
-    private static BookingService bookingService = new BookingService();
-    private static ReportService reportService = new ReportService();
+    private static final Scanner sc = new Scanner(System.in);
+    private static final MovieRepository movieRepo = new MovieRepository();
+    private static final RoomRepository roomRepo = new RoomRepository();
+    private static final ShowtimeRepository showRepo = new ShowtimeRepository();
+    private static final BookingService bookingService = new BookingService();
+    private static final ReportService reportService = new ReportService();
 
     public static void main(String[] args) {
         ensureSampleData();
-        Scanner sc = new Scanner(System.in);
         while (true) {
-            System.out.println("== Cinema Management ==");
-            System.out.println("1. List movies");
-            System.out.println("2. Add movie");
-            System.out.println("3. List showtimes");
-            System.out.println("4. Create showtime");
-            System.out.println("5. Book ticket");
-            System.out.println("6. Reports (top3 revenue)");
-            System.out.println("0. Exit");
-            System.out.print("Choose: ");
+            System.out.println("== Quản Lý Rạp Phim ==");
+            System.out.println("1. Danh sách phim");
+            System.out.println("2. Thêm phim");
+            System.out.println("3. Lịch chiếu phim");
+            System.out.println("4. Tạo thời gian chiếu phim");
+            System.out.println("5. Đặt vé");
+            System.out.println("6. Báo cáo doanh thu( top 3)");
+            System.out.println("7. Tìm lịch chiếu theo ngày và phim");
+            System.out.println("0. Thoát");
+            System.out.print("Chọn: ");
             String cho = sc.nextLine();
             try {
                 switch (cho) {
@@ -64,6 +66,24 @@ public class Main {
                         break;
                     case "6":
                         System.out.println("Top3: " + reportService.top3Movies());
+                        break;
+                    case "7":
+                        System.out.print("Nhập Movie ID: ");
+                        String searchMovieId = sc.nextLine();
+                        System.out.print("Nhập Ngày (YYYY-MM-DD): ");
+                        String dateStr = sc.nextLine();
+
+                        try {
+                            LocalDate searchDate = LocalDate.parse(dateStr);
+                            System.out.println("--- LỊCH CHIẾU NGÀY " + searchDate + " CHO PHIM " + searchMovieId + " ---");
+
+                            showRepo.findAll().stream()
+                                    .filter(show -> show.getDate().equals(searchDate) && show.getMovieId().equalsIgnoreCase(searchMovieId))
+                                    .forEach(System.out::println);
+
+                        } catch (DateTimeParseException e) {
+                            System.out.println("Lỗi: Định dạng ngày không hợp lệ (cần YYYY-MM-DD).");
+                        }
                         break;
                     case "0":
                         System.out.println("Save & exit.");
