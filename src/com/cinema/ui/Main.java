@@ -22,51 +22,62 @@ public class Main {
         ensureSampleData();
         Scanner sc = new Scanner(System.in);
         while (true) {
-            System.out.println("== Cinema Management ==");
-            System.out.println("1. List movies");
-            System.out.println("2. Add movie");
-            System.out.println("3. List showtimes");
-            System.out.println("4. Create showtime");
-            System.out.println("5. Book ticket");
-            System.out.println("6. Reports (top3 revenue)");
-            System.out.println("0. Exit");
-            System.out.print("Choose: ");
+            System.out.println("== HỆ THỐNG QUẢN LÝ RẠP CHIẾU PHIM ==");
+            System.out.println("1. Danh sách phim");
+            System.out.println("2. Thêm phim mới");
+            System.out.println("3. Danh sách suất chiếu");
+            System.out.println("4. Tạo suất chiếu");
+            System.out.println("5. Đặt vé");
+            System.out.println("6. Báo cáo (Top 3 doanh thu)");
+            System.out.println("0. Thoát chương trình");
+            System.out.print("Chọn chức năng: ");
             String cho = sc.nextLine();
             try {
                 switch (cho) {
                     case "1":
+                        System.out.println("=== DANH SÁCH PHIM ===");
                         movieRepo.findAll().forEach(System.out::println);
                         break;
                     case "2":
-                        System.out.print("Title: "); String title = sc.nextLine();
+                        System.out.println("=== THÊM PHIM MỚI ===");
+                        System.out.print("Tên phim: ");
+                        String title = sc.nextLine();
                         String id = UUID.randomUUID().toString();
-                        Movie m = new FeatureFilm(id, title, "Genre", 100, 13, "desc");
+                        Movie m = new FeatureFilm(id, title, "Thể loại", 100, 13, "Mô tả");
                         movieRepo.add(m);
-                        System.out.println("Added " + id);
+                        System.out.println("Thêm phim thành công" + id);
                         break;
                     case "3":
+                        System.out.println("=== DANH SÁCH SUẤT CHIẾU ===");
                         showRepo.findAll().forEach(System.out::println);
                         break;
                     case "4":
-                        System.out.print("MovieId: "); String mid = sc.nextLine();
-                        System.out.print("RoomId: "); String rid = sc.nextLine();
+                        System.out.println("=== TẠO SUẤT CHIẾU ===");
+                        System.out.print("ID phim: ");
+                        String mid = sc.nextLine();
+                        System.out.print("ID phòng chiếu: ");
+                        String rid = sc.nextLine();
                         String sid = UUID.randomUUID().toString();
                         Showtime s = new Showtime(sid, mid, rid,
                                 LocalDate.now(), LocalTime.of(18, 0));
                         showRepo.add(s);
-                        System.out.println("Show created: " + sid);
+                        System.out.println("Tạo suất chiếu thành công: " + sid);
                         break;
                     case "5":
-                        System.out.print("ShowtimeId: "); String sh = sc.nextLine();
-                        System.out.print("SeatId: "); String seatId = sc.nextLine();
+                        System.out.println("=== ĐẶT VÉ ===");
+                        System.out.print("ID suất chiếu: ");
+                        String sh = sc.nextLine();
+                        System.out.print("Mã ghế: ");
+                        String seatId = sc.nextLine();
                         bookingService.book(sh, seatId);
-                        System.out.println("Booked.");
+                        System.out.println("Đặt vé thành công.");
                         break;
                     case "6":
+                        System.out.println("=== TOP 3 PHIM DOANH THU CAO NHẤT ===");
                         System.out.println("Top3: " + reportService.top3Movies());
                         break;
                     case "0":
-                        System.out.println("Save & exit.");
+                        System.out.println("Đang lưu dữ liệu và thoát...");
                         sc.close();
                         return;
                     default:
