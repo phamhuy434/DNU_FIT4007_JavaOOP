@@ -30,7 +30,7 @@ public class Main {
             System.out.println("4. Tạo thời gian chiếu phim");
             System.out.println("5. Đặt vé");
             System.out.println("6. Báo cáo doanh thu( top 3)");
-            System.out.println("7. Tìm lịch chiếu theo ngày và phim");
+            System.out.println("7. Đặt lịch chiếu theo ngày và phim");
             System.out.println("0. Thoát");
             System.out.print("Chọn: ");
             String cho = sc.nextLine();
