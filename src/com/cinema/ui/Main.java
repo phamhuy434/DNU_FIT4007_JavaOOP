@@ -30,7 +30,7 @@ public class Main {
             System.out.println("4. Tạo thời gian chiếu phim");
             System.out.println("5. Đặt vé");
             System.out.println("6. Báo cáo doanh thu( top 3)");
-            System.out.println("7. Đặt lịch chiếu theo ngày và phim");
+            System.out.println("7. Tìm lịch chiếu theo ngày và phim");
             System.out.println("0. Thoát");
             System.out.print("Chọn: ");
             String cho = sc.nextLine();
@@ -68,22 +68,43 @@ public class Main {
                         System.out.println("Top3: " + reportService.top3Movies());
                         break;
                     case "7":
-                        System.out.print("Nhập Movie ID: ");
-                        String searchMovieId = sc.nextLine();
-                        System.out.print("Nhập Ngày (YYYY-MM-DD): ");
-                        String dateStr = sc.nextLine();
+                        System.out.println("TÌM LỊCH CHIẾU");
 
-                        try {
-                            LocalDate searchDate = LocalDate.parse(dateStr);
-                            System.out.println("--- LỊCH CHIẾU NGÀY " + searchDate + " CHO PHIM " + searchMovieId + " ---");
-
-                            showRepo.findAll().stream()
-                                    .filter(show -> show.getDate().equals(searchDate) && show.getMovieId().equalsIgnoreCase(searchMovieId))
-                                    .forEach(System.out::println);
-
-                        } catch (DateTimeParseException e) {
-                            System.out.println("Lỗi: Định dạng ngày không hợp lệ (cần YYYY-MM-DD).");
+                        //Chọn Ngày (Hiển thị 5 ngày tới)
+                        System.out.println("Chọn ngày muốn xem:");
+                        for (int i = 0; i < 2; i++) {
+                            LocalDate futureDate = LocalDate.now().plusDays(i);
+                            System.out.println(i + ". " + futureDate + (i == 0 ? " (Hôm nay)" : ""));
                         }
+                        System.out.print("Chọn số (0-4) hoặc Ngày cụ thể (YYYY-MM-DD): ");
+                        String dateInput = sc.nextLine();
+
+                        LocalDate searchDate;
+                        try {
+                            if (dateInput.matches("\\d")) {
+                                // Nếu người dùng nhập 0, 1, 2, 3, 4
+                                searchDate = LocalDate.now().plusDays(Integer.parseInt(dateInput));
+                            } else {
+                                // Nếu người dùng nhập YYYY-MM-DD
+                                searchDate = LocalDate.parse(dateInput);
+                            }
+                        } catch (DateTimeParseException | NumberFormatException e) {
+                            System.out.println("Lỗi: Định dạng ngày không hợp lệ. Hủy tìm kiếm.");
+                            break;
+                        }
+
+                        //Nhập Movie ID
+                        System.out.print("Nhập Movie ID để lọc (hoặc nhấn ENTER để xem tất cả phim): ");
+                        String searchMovieId = sc.nextLine().trim();
+
+                        System.out.println("\nLỊCH CHIẾU NGÀY " + searchDate + " ");
+
+                        // Lọc và hiển thị
+                        showRepo.findAll().stream()
+                                .filter(show -> show.getDate().equals(searchDate)) // Lọc theo ngày
+                                .filter(show -> searchMovieId.isEmpty() || show.getMovieId().equalsIgnoreCase(searchMovieId)) // Lọc theo phim
+                                .forEach(System.out::println);
+
                         break;
                     case "0":
                         System.out.println("Save & exit.");
