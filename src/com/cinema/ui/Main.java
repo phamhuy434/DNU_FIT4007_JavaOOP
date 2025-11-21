@@ -19,7 +19,7 @@ public class Main {
     private static final ShowtimeRepository showRepo = new ShowtimeRepository();
     private static final BookingService bookingService = new BookingService();
     private static final ReportService reportService = new ReportService();
-
+    private static final TicketRepository ticketRepo = new TicketRepository();
     public static void main(String[] args) {
         ensureSampleData();
         while (true) {
@@ -31,6 +31,8 @@ public class Main {
             System.out.println("5. Đặt vé");
             System.out.println("6. Báo cáo doanh thu( top 3)");
             System.out.println("7. Tìm lịch chiếu theo ngày và phim");
+            System.out.println("8. Tạo phòng và ghế");
+            System.out.println("9. Liệt kê cé theo suất chiếu");
             System.out.println("0. Thoát");
             System.out.print("Chọn: ");
             String cho = sc.nextLine();
@@ -106,8 +108,52 @@ public class Main {
                                 .forEach(System.out::println);
 
                         break;
+                    case "8":
+                        System.out.println("TẠO PHÒNG CHIẾU MỚI");
+                        System.out.print("Nhập mã phòng: ");
+                        String maPhong = sc.nextLine();
+                        System.out.print("Nhập loại phòng (VIP/NORMAL): ");
+                        String loaiPhong = sc.nextLine();
+                        String idPhong = UUID.randomUUID().toString().substring(0, 4);
+                        com.cinema.model.Room phongMoi = new com.cinema.model.Room(idPhong, maPhong, loaiPhong);
+
+                        try {
+                            System.out.print("Nhập số lượng ghế: ");
+                            String gheStr = sc.nextLine();
+                            int soGhe = Integer.parseInt(gheStr);
+                            double giaVe = 90000.0;
+                            for (int i = 1; i <= soGhe; i++) {
+                                String idGhe = "Seat-" + i;
+                                phongMoi.addSeat(new com.cinema.model.seat.StandardSeat(idGhe, giaVe));
+                            }
+
+                            roomRepo.add(phongMoi);
+                            System.out.println("Tạo phòng " + maPhong + " Thành công.");
+
+                        } catch (NumberFormatException e) {
+                            System.out.println("Loi: Số lượng ghế phải là số.");
+                        } catch (Exception e) {
+                            System.out.println("Lỗi xảy ra: " + e.getMessage());
+                        }
+                        break;
+                    case "9":
+                        System.out.println("LIỆT KÊ VÉ ĐÃ ĐẶT THEO SUẤT CHIẾU");
+                        System.out.print("Nhập Showtime ID: ");
+                        String idSuatChieu = sc.nextLine();
+
+                        System.out.println("CÁC VÉ ĐÃ ĐẶT CHO SUẤT CHIẾU: " + idSuatChieu);
+
+                        try {
+                            ticketRepo.findAll().stream()
+                                    .filter(t -> t.getShowtimeId().equalsIgnoreCase(idSuatChieu))
+                                    .forEach(t -> System.out.println(t.toString()));
+
+                        } catch (Exception e) {
+                            System.out.println("Lỗi truy vấn: " + e.getMessage());
+                        }
+                        break;
                     case "0":
-                        System.out.println("Save & exit.");
+                        System.out.println("Lưu và thoát.");
                         sc.close();
                         return;
                     default:
@@ -119,8 +165,6 @@ public class Main {
             System.out.println();
         }
     }
-
-    // create sample minimal data if none exists
     private static void ensureSampleData() {
         if (movieRepo.findAll().isEmpty()) {
             movieRepo.add(new FeatureFilm("m-1", "Inception", "Sci-Fi", 148, 13, "Dream heist"));

@@ -1,5 +1,6 @@
 package com.cinema.model;
 
+import com.cinema.exception.NotFoundException;
 import com.cinema.exception.SeatAlreadyBookedException;
 
 import java.io.Serializable;
@@ -45,14 +46,14 @@ public class Showtime implements Serializable {
     }
 
     // -------------------------------
-    // ⭐ Kiểm tra ghế đã đặt
+    //Kiểm tra ghế đã đặt
     // -------------------------------
     public boolean isSeatBooked(String seatId) {
         return bookedSeatIds.contains(seatId);
     }
 
     // -------------------------------
-    // ⭐ Check trùng suất chiếu
+    //Check trùng suất chiếu
     // -------------------------------
     public boolean isConflict(Showtime other) {
         if (!this.roomId.equals(other.roomId)) return false;

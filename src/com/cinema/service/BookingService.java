@@ -14,8 +14,8 @@ import java.util.*;
 public class BookingService {
     private MovieRepository movieRepo = new MovieRepository();
     private RoomRepository roomRepo = new RoomRepository();
-    private ShowtimeRepository showRepo = new ShowtimeRepository();
-    private TicketRepository ticketRepo = new TicketRepository();
+    private final ShowtimeRepository showRepo = new ShowtimeRepository();
+    private final TicketRepository ticketRepo = new TicketRepository();
 
     public Ticket book(String showtimeId, String seatId) throws Exception {
         Showtime s = showRepo.findById(showtimeId);

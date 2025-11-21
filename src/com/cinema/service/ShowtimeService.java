@@ -5,6 +5,7 @@ import com.cinema.repository.ShowtimeRepository;
 
 import java.util.List;
 
+import com.cinema.exception.NotFoundException;
 public class ShowtimeService {
 
     private final ShowtimeRepository showtimeRepository;
@@ -19,7 +20,7 @@ public class ShowtimeService {
 
         for (Showtime existing : allShowtimes) {
             if (newShowtime.isConflict(existing)) {
-                System.err.println("❌ Lỗi: Suất chiếu trùng lịch!");
+                System.err.println("Lỗi: Suất chiếu trùng lịch!");
                 return false;
             }
         }
