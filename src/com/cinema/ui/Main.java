@@ -32,7 +32,7 @@ public class Main {
             System.out.println("6. Báo cáo doanh thu( top 3)");
             System.out.println("7. Tìm lịch chiếu theo ngày và phim");
             System.out.println("8. Tạo phòng và ghế");
-            System.out.println("9. Liệt kê cé theo suất chiếu");
+            System.out.println("9. Liệt kê vé theo suất chiếu");
             System.out.println("0. Thoát");
             System.out.print("Chọn: ");
             String cho = sc.nextLine();
