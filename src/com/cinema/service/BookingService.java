@@ -40,4 +40,29 @@ public class BookingService {
         roomRepo.save();
         return t;
     }
+    public String printInvoice(String ticketId) throws Exception {
+        Ticket t = ticketRepo.findById(ticketId);
+        if (t == null) throw new Exception("Ticket not found");
+
+        Showtime s = showtimeRepo.findById(t.getShowtimeId());
+        Movie m = movieRepo.findById(s.getMovieId());
+        Room r = roomRepo.findById(s.getRoomId());
+
+        StringBuilder bill = new StringBuilder();
+
+        bill.append("\n========== CINEMA INVOICE ==========\n");
+        bill.append("Ticket ID  : ").append(t.getId()).append("\n");
+        bill.append("Movie      : ").append(m.getTitle()).append("\n");
+        bill.append("Room       : ").append(r.getName()).append("\n");
+        bill.append("Seat       : ").append(t.getSeatId()).append("\n");
+        bill.append("Date       : ").append(s.getDate()).append("\n");
+        bill.append("Time       : ").append(s.getTime()).append("\n");
+        bill.append("-------------------------------------\n");
+        bill.append("Price      : ").append(t.getPrice()).append(" VND\n");
+        bill.append("Paid by    : ").append(t.getPayment().getMethod()).append("\n");
+        bill.append("=====================================\n");
+
+        return bill.toString();
+    }
+
 }

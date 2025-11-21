@@ -1,5 +1,7 @@
 package com.cinema.service;
 
+import com.cinema.model.Showtime;
+import com.cinema.model.Ticket;
 import com.cinema.repository.TicketRepository;
 
 import java.util.*;
@@ -23,4 +25,5 @@ public class ReportService {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
+
 }
